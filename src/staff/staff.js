@@ -32,13 +32,14 @@ const upload = multer({
 /////////////////////
 // POST KTP IMAGE //
 ///////////////////
+// belum bisa
 // butuh auth
 router.post('/merchant/ktp', upload.single('ktp'), async(req,res) =>{
     try{
-        const sql = `insert into table_merchant (ktp_image) values ?`
+        const sql = `UPDATE table_merchant SET ktp_image = ? values ?`
         const filename = `${req.merchant.storename}-ktp.png`
         const data = [filename, req.merchant.storename]
-        const finalsave = await sharp(req.file.buffer).resize(200).png().toFile(`${ktpImageDirectory}/${filename}`)
+        await sharp(req.file.buffer).resize(200).png().toFile(`${ktpImageDirectory}/${filename}`)
 
         conn.query(sql, data, (err,result) =>{
             if(err) return res.status(500).send({err: err.sqlMessage})
@@ -54,12 +55,13 @@ router.post('/merchant/ktp', upload.single('ktp'), async(req,res) =>{
 ///////////////////////
 // POST STORE IMAGE //
 /////////////////////
+// belum bisa
 router.post('/merchant/store', auth, upload.single('store'), async(req,res) =>{
     try {
         const sql = `insert into merchant (store_image) values ?`
         const filename = `${req.merchant.storename}-store.png`
         const data = [filename, req.merchant.storename]
-        const finalsave = await sharp(req.file.buffer).resize(200).png().toFile(`${storeImageDirectory}/${filename}`)
+        await sharp(req.file.buffer).resize(200).png().toFile(`${storeImageDirectory}/${filename}`)
 
         conn.query(sql, data,(err,result) =>{
             if(err) return res.status(500).send({err: sqlMessage})
@@ -75,12 +77,13 @@ router.post('/merchant/store', auth, upload.single('store'), async(req,res) =>{
 ///////////////////////////
 // POST SIGNATURE IMAGE //
 /////////////////////////
+// belum bisa
 router.post('/merchant/signature', auth, upload.single('signature'), async(req,res) =>{
     try {
         const sql = `insert into merchant (signature_image) values ?`
         const filename = `${req.merchant.storename}-signature.png`
         const data = [filename, req.merchant.storename]
-        const finalsave = await sharp(req.file.buffer).resize(200).png().toFile(`${signatureImageDirectory}/${filename}`)
+        await sharp(req.file.buffer).resize(200).png().toFile(`${signatureImageDirectory}/${filename}`)
 
         conn.query(sql, data,(err,result) =>{
             if(err) return res.status(500).send({err: sqlMessage})
@@ -92,6 +95,96 @@ router.post('/merchant/signature', auth, upload.single('signature'), async(req,r
 }, (err, req,res,next) =>{
     res.status(400).send(err.message)
 })
+
+
+// ------------------------------- START ADD DATA FIRST TIME ------------------------------- //
+///////////////////////////////////////////////////////
+// GET LAST DATA AFTER ADD DATA FIRST TIME PER SALES//
+/////////////////////////////////////////////////////
+// sudah bisa
+router.get('/merchant/lastdata/sales/:id', (req,res) =>{
+    // Ambil nama toko buat menjadi nama file ktp di data terakhir berdasarkan id
+    const sqlRead = `Select * FROM table_merchant WHERE staff_id = ${req.params.id} ORDER BY id DESC LIMIT 1`
+
+    conn.query(sqlRead, (err,result) =>{
+        if(err) return res.status(500).send(err)
+
+        res.status(200).send(result[0])
+    })
+})
+///////////////////////////////////////////////
+// POST KTP IMAGE AFTER ADD DATA FIRST TIME //
+/////////////////////////////////////////////
+// sudah bisa
+// butuh auth
+router.patch('/merchant/fistadd/ktpimage', upload.single('ktpimage'), async(req,res) =>{
+    try {
+
+        const filename = `${req.body.store_name}-ktp_image.png`        
+        const sql = `UPDATE table_merchant SET KTP_image = "${filename}" WHERE staff_id = ${req.body.staff_id} AND store_name = "${req.body.store_name}" ORDER BY id DESC LIMIT 1`
+ 
+        await sharp(req.file.buffer).resize(200).png().toFile(`${ktpImageDirectory}/${filename}`)
+
+        conn.query(sql,(err,result) =>{
+            if(err) return res.status(500).send(err.message)
+            res.status(200).send(result)
+        })
+    } catch (error){
+        res.status(500).send(error.message)
+    }
+}, (err, req,res,next) =>{
+    res.status(400).send(err.message)
+})
+
+///////////////////////////////////////////////
+// POST STORE IMAGE AFTER ADD DATA FIRST TIME //
+/////////////////////////////////////////////
+// sudah bisa
+// butuh auth
+router.patch('/merchant/fistadd/storeimage', upload.single('storeimage'), async(req,res) =>{
+    try {
+
+        const filename = `${req.body.store_name}-store_image.png`        
+        const sql = `UPDATE table_merchant SET store_image = "${filename}" WHERE staff_id = ${req.body.staff_id} AND store_name = "${req.body.store_name}" ORDER BY id DESC LIMIT 1`
+ 
+        await sharp(req.file.buffer).resize(200).png().toFile(`${storeImageDirectory}/${filename}`)
+
+        conn.query(sql,(err,result) =>{
+            if(err) return res.status(500).send(err.message)
+            res.status(200).send(result)
+        })
+    } catch (error){
+        res.status(500).send(error.message)
+    }
+}, (err, req,res,next) =>{
+    res.status(400).send(err.message)
+})
+
+/////////////////////////////////////////////////////
+// POST SIGNATURE IMAGE AFTER ADD DATA FIRST TIME //
+///////////////////////////////////////////////////
+// sudah bisa
+// butuh auth
+router.patch('/merchant/fistadd/signatureimage', upload.single('signatureimage'), async(req,res) =>{
+    try {
+
+        const filename = `${req.body.store_name}-signature_image.png`        
+        const sql = `UPDATE table_merchant SET signature_image = "${filename}" WHERE staff_id = ${req.body.staff_id} AND store_name = "${req.body.store_name}" ORDER BY id DESC LIMIT 1`
+ 
+        await sharp(req.file.buffer).resize(200).png().toFile(`${signatureImageDirectory}/${filename}`)
+
+        conn.query(sql,(err,result) =>{
+            if(err) return res.status(500).send(err.message)
+            res.status(200).send(result)
+        })
+    } catch (error){
+        res.status(500).send(error.message)
+    }
+}, (err, req,res,next) =>{
+    res.status(400).send(err.message)
+})
+
+// ------------------------------- FINISH ADD DATA FIRST TIME ------------------------------- //
 
 
 /////////////////////
@@ -295,6 +388,20 @@ router.post('/leader/insert/staffid', (req,res) =>{
 
 //------------------ SALES ------------------\\ 
 
+///////////////////////////
+// READ ID FROM STAFF_ID//
+/////////////////////////
+router.get('/sales/read/id/:staff_id', (req,res) =>{
+    const getId = `SELECT id FROM table_staff WHERE staff_id = ${req.params.staff_id}`
+
+    conn.query(getId, (err,result) =>{
+        if(err){
+            return res.status(500).send(err)
+        }
+        res.status(200).send(result[0])
+    })
+})
+
 ////////////////////////////////
 // READ ALL MERCHANT PER SALES//
 ////////////////////////////////
@@ -323,46 +430,28 @@ router.get('/merchant/sales/read/:staff_id', (req,res) =>{
     })
 })
 
-////////////////////////////////
-// INSERT MERCHANT PER SALES //
-////////////////////////////////
+/////////////////////////////////////////
+// INSERT DATA TEXT MERCHANT BY SALES //
+///////////////////////////////////////
 // butuh auth
-router.post('/merchant/sales/insert', upload.single('image'), async(req,res) =>{
-
-    try {
-        const ktpname = `${req.body.KTP_image}-ktp_image.png`
-        const storename = `${req.body.store_name}-store_image.png`
-        const signaturename = `${req.body.signature_image}-signature_image.png`
-        
-        await sharp(req.file.buffer).resize(200).png().toFile(`${ktpImageDirectory}/${ktpname}`)
+router.post('/merchant/sales/insert', (req,res) =>{
 
         const sql = `INSERT INTO table_merchant SET 
         staff_id = ?, date_created = ?,
         store_name = ?, category_id = ?,
         address = ?, mobile_number = ?,
-        location = ?, approval = ?,  
-        KTP_image = ?, store_image = ?,
-        signature_image = ? `
+        location = ?, approval = ? `
     
         // staff_id: req.user.id, / staff_id: req.user.staff_id,
     
         const dataFinal = [ req.body.staff_id, req.body.date_created, req.body.store_name,
-            req.body.category_id, req.body.address, req.body.mobile_number, req.body.location, req.body.approval,
-            ktpname, storename, signaturename]
+            req.body.category_id, req.body.address, req.body.mobile_number, req.body.location, req.body.approval]
 
         conn.query(sql, dataFinal, (err,result) =>{
             if(err) return res.status(500).send(err)
 
             res.status(200).send({message: "Penambahan Product Berhasil", result})
         })
-
-    } catch (error) {
-         res.status(500).send(error)
-    }
-
-
-}, (err, req, res, next) => {
-    res.status(400).send(err.message)
 })
 
 /////////////////////
@@ -443,6 +532,7 @@ router.post('/user/login', (req, res) => {
 //////////////////////
 // DETAIL MERCHANT //
 ////////////////////
+// sudah bisa
 router.get('/detailmerchant/:id', (req,res) =>{
     const sql = `SELECT * FROM table_merchant WHERE id = ${req.params.id}`
 
