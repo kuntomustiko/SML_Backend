@@ -190,6 +190,7 @@ router.patch('/merchant/fistadd/signatureimage', upload.single('signatureimage')
 /////////////////////
 // READ KTP IMAGE //
 ///////////////////
+// sudah bisa
 router.get('/merchant/ktp/:filename', (req, res) => {
     let options = {
         root: ktpImageDirectory
@@ -207,15 +208,16 @@ router.get('/merchant/ktp/:filename', (req, res) => {
 ///////////////////////
 // READ STORE IMAGE //
 /////////////////////
-router.get('merchant/store/:filename', (req,res) =>{
+// sudah bisa
+router.get('/merchant/store/:filename', (req, res) => {
     let options = {
-        root : storeImageDirectory
+        root: storeImageDirectory
     };
 
     let filename = req.params.filename;
 
-    req.status(200).sendFile(filename, options, function(err){
-        if(err){
+    res.status(200).sendFile(filename, options, function(err) {
+        if(err) {
             return res.status(404).send({message: 'Gambar tidak ditemukan'})
         }
     });
@@ -224,15 +226,16 @@ router.get('merchant/store/:filename', (req,res) =>{
 ///////////////////////////
 // READ SIGNATURE IMAGE //
 /////////////////////////
-router.get('merchant/signature/:filename', (req,res) =>{
+// sudah bisa
+router.get('/merchant/signature/:filename', (req, res) => {
     let options = {
         root: signatureImageDirectory
     };
 
     let filename = req.params.filename;
 
-    req.status(200).sendFile(filename, options, function(err){
-        if(err){
+    res.status(200).sendFile(filename, options, function(err) {
+        if(err) {
             return res.status(404).send({message: 'Gambar tidak ditemukan'})
         }
     });
@@ -322,6 +325,27 @@ router.post('/merchant/signatureimage/:id', auth, upload.single('ktp'), async(re
 // bisa
 router.get('/merchant/leader/read', (req,res) =>{
     const sql = `SELECT * FROM table_merchant`
+
+    conn.query(sql, (err, result) =>{
+        if(err){
+            return res.status(500).send(err)
+        }
+        res.status(200).send(result)
+    })
+})
+
+/////////////////////////////////////////////////
+// READ ALL MERCHANT LEADER ONLY NOT APPROVAL //
+///////////////////////////////////////////////
+// belum ada jwt
+// bisa
+router.get('/merchant/leader/read/notapproval', (req,res) =>{
+    const sql = `SELECT merch.id, merch.staff_id, staff.staff_id, staff.name,
+    merch.date_created, merch.store_name, merch.category_id, merch.address,
+    merch.mobile_number, merch.location, merch.approval, merch.KTP_image, merch.store_image, merch.signature_image
+    FROM table_merchant as merch
+    JOIN table_staff as staff 
+    ON merch.staff_id = staff.id WHERE approval = 0;`
 
     conn.query(sql, (err, result) =>{
         if(err){
@@ -453,6 +477,22 @@ router.post('/merchant/sales/insert', (req,res) =>{
             res.status(200).send({message: "Penambahan Product Berhasil", result})
         })
 })
+
+////////////////////////
+// READ ALL CATEGORY //
+//////////////////////
+// Sudah Bisa
+router.get('/read/allcategory', (req,res) =>{
+    const sql = `SELECT * FROM table_category`
+
+    conn.query(sql, (err,result) =>{
+        if(err) return res.send(500).send(err)
+
+        console.log(result[0])
+        res.status(200).send(result)
+    })
+})
+
 
 /////////////////////
 // REGISTER STAFF //
