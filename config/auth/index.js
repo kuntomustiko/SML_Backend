@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken')
 const conn = require('../database')
 
-const auth = (req,res,next) =>{
+const auth = (req, res, next) =>{
     let token = req.header('Authorization');
 
+    // misalnya id = 10 
     let decoded = jwt.verify(token, 'secret_key')
 
     let sql = `SELECT * FROM table_staff WHERE id = ${decoded.id}`

@@ -33,7 +33,7 @@ const upload = multer({
 // POST KTP IMAGE //
 ///////////////////
 // belum bisa
-// butuh auth
+// butuh 
 router.post('/merchant/ktp', upload.single('ktp'), async(req,res) =>{
     try{
         const sql = `UPDATE table_merchant SET ktp_image = ? values ?`
@@ -56,7 +56,7 @@ router.post('/merchant/ktp', upload.single('ktp'), async(req,res) =>{
 // POST STORE IMAGE //
 /////////////////////
 // belum bisa
-router.post('/merchant/store', auth, upload.single('store'), async(req,res) =>{
+router.post('/merchant/store', upload.single('store'), async(req,res) =>{
     try {
         const sql = `insert into merchant (store_image) values ?`
         const filename = `${req.merchant.storename}-store.png`
@@ -78,7 +78,7 @@ router.post('/merchant/store', auth, upload.single('store'), async(req,res) =>{
 // POST SIGNATURE IMAGE //
 /////////////////////////
 // belum bisa
-router.post('/merchant/signature', auth, upload.single('signature'), async(req,res) =>{
+router.post('/merchant/signature', upload.single('signature'), async(req,res) =>{
     try {
         const sql = `insert into merchant (signature_image) values ?`
         const filename = `${req.merchant.storename}-signature.png`
@@ -116,8 +116,8 @@ router.get('/merchant/lastdata/sales/:id', (req,res) =>{
 // POST KTP IMAGE AFTER ADD DATA FIRST TIME //
 /////////////////////////////////////////////
 // sudah bisa
-// butuh auth
-router.patch('/merchant/fistadd/ktpimage', upload.single('ktpimage'), async(req,res) =>{
+// butuh 
+router.patch('/merchant/firstadd/ktpimage',  upload.single('ktpimage'), async(req,res) =>{
     try {
 
         const filename = `${req.body.store_name}-ktp_image.png`        
@@ -140,8 +140,8 @@ router.patch('/merchant/fistadd/ktpimage', upload.single('ktpimage'), async(req,
 // POST STORE IMAGE AFTER ADD DATA FIRST TIME //
 /////////////////////////////////////////////
 // sudah bisa
-// butuh auth
-router.patch('/merchant/fistadd/storeimage', upload.single('storeimage'), async(req,res) =>{
+// butuh 
+router.patch('/merchant/firstadd/storeimage', upload.single('storeimage'), async(req,res) =>{
     try {
 
         const filename = `${req.body.store_name}-store_image.png`        
@@ -164,8 +164,8 @@ router.patch('/merchant/fistadd/storeimage', upload.single('storeimage'), async(
 // POST SIGNATURE IMAGE AFTER ADD DATA FIRST TIME //
 ///////////////////////////////////////////////////
 // sudah bisa
-// butuh auth
-router.patch('/merchant/fistadd/signatureimage', upload.single('signatureimage'), async(req,res) =>{
+// butuh 
+router.patch('/merchant/firstadd/signatureimage',  upload.single('signatureimage'), async(req,res) =>{
     try {
 
         const filename = `${req.body.store_name}-signature_image.png`        
@@ -244,7 +244,7 @@ router.get('/merchant/signature/:filename', (req, res) => {
 /////////////////////
 // EDIT KTP IMAGE //
 ///////////////////
-router.post('/merchant/ktpimage/:id', auth, upload.single('ktp'), async(req,res) =>{
+router.post('/merchant/ktpimage/:id',  upload.single('ktp'), async(req,res) =>{
     try {
         const ktpimg = `${req.params.id}-ktp.png`
     
@@ -269,7 +269,7 @@ router.post('/merchant/ktpimage/:id', auth, upload.single('ktp'), async(req,res)
 ///////////////////////
 // EDIT STORE IMAGE //
 /////////////////////
-router.post('/merchant/storeimage/:id', auth, upload.single('ktp'), async(req,res) =>{
+router.post('/merchant/storeimage/:id',  upload.single('ktp'), async(req,res) =>{
     try {
         const storeimg = `${req.params.id}-store.png`
     
@@ -294,7 +294,7 @@ router.post('/merchant/storeimage/:id', auth, upload.single('ktp'), async(req,re
 //////////////////////////
 // EDIT SIGNATURE IMAGE //
 /////////////////////////
-router.post('/merchant/signatureimage/:id', auth, upload.single('ktp'), async(req,res) =>{
+router.post('/merchant/signatureimage/:id',  upload.single('ktp'), async(req,res) =>{
     try {
         const signatureimg = `${req.params.id}-signature.png`
     
@@ -323,7 +323,7 @@ router.post('/merchant/signatureimage/:id', auth, upload.single('ktp'), async(re
 /////////////////////////////
 // belum ada jwt
 // bisa
-router.get('/merchant/leader/read', (req,res) =>{
+router.get('/merchant/leader/read',  (req,res) =>{
     const sql = `SELECT * FROM table_merchant`
 
     conn.query(sql, (err, result) =>{
@@ -339,7 +339,7 @@ router.get('/merchant/leader/read', (req,res) =>{
 ///////////////////////////////////////////////
 // belum ada jwt
 // bisa
-router.get('/merchant/leader/read/notapproval', (req,res) =>{
+router.get('/merchant/leader/read/notapproval',  (req,res) =>{
     const sql = `SELECT merch.id, merch.staff_id, staff.staff_id, staff.name,
     merch.date_created, merch.store_name, merch.category_id, merch.address,
     merch.mobile_number, merch.location, merch.approval, merch.KTP_image, merch.store_image, merch.signature_image
@@ -360,7 +360,7 @@ router.get('/merchant/leader/read/notapproval', (req,res) =>{
 /////////////////////////
 // belum ada jwt
 // bisa
-router.patch('/merchant/leader/update/:id', (req,res)=>{
+router.patch('/merchant/leader/update/:id',  (req,res)=>{
     const sql = `UPDATE table_merchant SET ? WHERE id = ?`
     const data = [req.body, req.params.id]
 
@@ -377,9 +377,9 @@ router.patch('/merchant/leader/update/:id', (req,res)=>{
 /////////////////////////////
 // DELETE MERCHANT LEADER //
 ///////////////////////////
-// butuh auth
+// butuh 
 // belum bisa
-router.delete('/merchant/leader/delete/:id', (req,res) =>{
+router.delete('/merchant/leader/delete/:id',  (req,res) =>{
     const data = {id: req.params.id}
     const sql = `DELETE FROM table_merchant WHERE ?`
    
@@ -395,9 +395,9 @@ router.delete('/merchant/leader/delete/:id', (req,res) =>{
 ////////////////////////////////
 // INSERT STAFF ID BY LEADER //
 //////////////////////////////
-// butuh auth jwt
+// butuh  jwt
 // bisa
-router.post('/leader/insert/staffid', (req,res) =>{
+router.post('/leader/insert/staffid',  (req,res) =>{
     const sql = `INSERT INTO table_staff (staff_id) SET ?`
     const data = req.body 
 
@@ -430,7 +430,7 @@ router.get('/sales/read/id/:staff_id', (req,res) =>{
 // READ ALL MERCHANT PER SALES//
 ////////////////////////////////
 // sudah bisa
-// butuh auth
+// butuh 
 router.get('/merchant/sales/read/:staff_id', (req,res) =>{
 
     const getStaffId = `SELECT id FROM table_staff WHERE staff_id = ${req.params.staff_id}`
@@ -457,7 +457,7 @@ router.get('/merchant/sales/read/:staff_id', (req,res) =>{
 /////////////////////////////////////////
 // INSERT DATA TEXT MERCHANT BY SALES //
 ///////////////////////////////////////
-// butuh auth
+// butuh 
 router.post('/merchant/sales/insert', (req,res) =>{
 
         const sql = `INSERT INTO table_merchant SET 
@@ -526,7 +526,7 @@ router.post('/register_staff', (req, res) => {
 // LOGIN STAFF & LEADER //
 /////////////////////////
 // bisa virza
-router.post('/user/login', (req, res) => {
+router.post('/login', (req, res) => {
    const {email, password} = req.body
 
    const sql = `SELECT * FROM table_staff WHERE email = '${email}'`
@@ -547,7 +547,8 @@ router.post('/user/login', (req, res) => {
       // Jika user memasukkan password yang salah
       if(!validPassword) return res.status(400).send({message: 'password tidak valid'})
       // Verikasi status verified
-      let token = jwt.sign({ id: user.staff_id}, 'secretcode')
+      let token = jwt.sign({ id: user.staff_id}, 'secret_key')
+      
       // Property user_id dan token merupakan nama kolom yang ada di tabel 'tokens'
       const data = {staff_id : user.staff_id, token : token}
 
@@ -558,7 +559,8 @@ router.post('/user/login', (req, res) => {
          delete user.password
          // delete user.avatar
          // delete user.verified
-         const sql3 = `UPDATE table_staff SET token_id = ${result.insertId} WHERE staff_id = ${user.staff_id} `
+         const sql3 = `UPDATE table_staff SET token_id = ${result.insertId}
+          WHERE staff_id = ${user.staff_id} `
          conn.query(sql3)
          res.status(200).send({
             message: 'Login berhasil',
@@ -567,6 +569,23 @@ router.post('/user/login', (req, res) => {
          })
       })
    })
+})
+
+////////////////////////////
+// LOGOUT STAFF & LEADER //
+//////////////////////////
+// butuh 
+router.delete('/logout', (req,res) => {
+    const sql = `DELETE FROM table_staff WHERE staff_id = ${req.user.staff_id}`
+
+    conn.query(sql, (err, result) => {
+        if(err) return res.status(500).send(err)
+        
+       res.status(200).send({
+          message : "delete berhasil",
+          result
+       })
+     })
 })
 
 //////////////////////
@@ -584,5 +603,18 @@ router.get('/detailmerchant/:id', (req,res) =>{
     })
 })
 
+/////////////////////////////
+// UPDATE DETAIL MERCHANT //
+///////////////////////////
+router.patch('/update/detailmerchant/:id', (req,res) =>{
+    const sql = `UPDATE table_merchant SET ?  WHERE id = ${req.params.id}`
 
+
+    conn.query(sql, (err,result) =>{
+        if(err) return res.send(500).send(err)
+
+        console.log(result[0])
+        res.status(200).send(result)
+    })
+})
 module.exports = router
