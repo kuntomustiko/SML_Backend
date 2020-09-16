@@ -34,9 +34,9 @@ const upload = multer({
 ///////////////////
 // belum bisa
 // butuh 
-router.post('/merchant/ktp', upload.single('ktp'), async(req,res) =>{
+router.post('/merchant/update/ktpimage', upload.single('ktp'), async(req,res) =>{
     try{
-        const sql = `UPDATE table_merchant SET ktp_image = ? values ?`
+        const sql = `UPDATE table_merchant SET KTP_image = ? WHERE id = ? `
         const filename = `${req.merchant.storename}-ktp.png`
         const data = [filename, req.merchant.storename]
         await sharp(req.file.buffer).resize(200).png().toFile(`${ktpImageDirectory}/${filename}`)
@@ -56,9 +56,9 @@ router.post('/merchant/ktp', upload.single('ktp'), async(req,res) =>{
 // POST STORE IMAGE //
 /////////////////////
 // belum bisa
-router.post('/merchant/store', upload.single('store'), async(req,res) =>{
+router.post('/merchant/update/storeimage', upload.single('store'), async(req,res) =>{
     try {
-        const sql = `insert into merchant (store_image) values ?`
+        const sql = `UPDATE table_merchant SET store_image = ? WHERE id = ?`
         const filename = `${req.merchant.storename}-store.png`
         const data = [filename, req.merchant.storename]
         await sharp(req.file.buffer).resize(200).png().toFile(`${storeImageDirectory}/${filename}`)
@@ -78,9 +78,9 @@ router.post('/merchant/store', upload.single('store'), async(req,res) =>{
 // POST SIGNATURE IMAGE //
 /////////////////////////
 // belum bisa
-router.post('/merchant/signature', upload.single('signature'), async(req,res) =>{
+router.post('/merchant/update/signatureimage', upload.single('signature'), async(req,res) =>{
     try {
-        const sql = `insert into merchant (signature_image) values ?`
+        const sql = `UPDATE table_merchant SET KTP_image = ? WHERE id = ?`
         const filename = `${req.merchant.storename}-signature.png`
         const data = [filename, req.merchant.storename]
         await sharp(req.file.buffer).resize(200).png().toFile(`${signatureImageDirectory}/${filename}`)
@@ -401,7 +401,6 @@ router.post('/leader/insert/staffid',  (req,res) =>{
     const sql = `INSERT INTO table_staff (staff_id) SET ?`
     const data = req.body 
 
-
     conn.query(sql, data, (err,result) =>{
         if (err) {
             return res.send(err)
@@ -606,15 +605,20 @@ router.get('/detailmerchant/:id', (req,res) =>{
 /////////////////////////////
 // UPDATE DETAIL MERCHANT //
 ///////////////////////////
-router.patch('/update/detailmerchant/:id', (req,res) =>{
-    const sql = `UPDATE table_merchant SET ?  WHERE id = ${req.params.id}`
+router.post('/update/detailmerchant/:id', (req,res) =>{
+    const sql = `UPDATE table_merchant SET ? WHERE id = ${req.params.id}`
 
+    const data = {store_name: req.body.store_name,
+        category_id: req.body.category_id,
+        mobile_number: req.body.mobile_number,
+        address: req.body.address, location: req.body.location, approval: req.body.approval }
 
-    conn.query(sql, (err,result) =>{
-        if(err) return res.send(500).send(err)
+    // store name, category, mobile number, address, location (latitude/longitude)
 
-        console.log(result[0])
-        res.status(200).send(result)
+    conn.query(sql, data, (err,result) =>{
+        if(err) return res.status(500).send(err)
+
+        res.status(200).send({message: "Penambahan Product Berhasil", result})
     })
 })
 module.exports = router
