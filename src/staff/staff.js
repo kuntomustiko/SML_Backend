@@ -76,12 +76,11 @@ router.patch('/merchant/update/storeimage', upload.single('storeimage'), async(r
 // PATCH UPDATE DATA SIGNATURE IMAGE //
 //////////////////////////////////////
 // Sudah Bisa
-router.patch('/merchant/update/signatureimage', upload.single('signatureimage'), async(req,res) =>{
+router.patch('/merchant/update/signature', upload.single('signatureimage'), async(req,res) =>{
     try {
         const filename = `${req.body.store_name}-signature.png`
         const sql = `UPDATE table_merchant SET signature_image = "${filename}" WHERE staff_id = ${req.body.staff_id} AND id = ${req.body.id}`
-       
-        await sharp(req.file.buffer).resize(200).png().toFile(`${signatureImageDirectory}/${filename}`)
+        await sharp(req.file.buffer).resize(200).png().toFile(`${storeImageDirectory}/${filename}`)
 
         conn.query(sql, (err,result) =>{
             if(err) return res.status(500).send({err: sqlMessage})
@@ -473,6 +472,41 @@ router.post('/merchant/sales/insert', (req,res) =>{
 
             res.status(200).send({message: "Penambahan Product Berhasil", result})
         })
+})
+
+/////////////////////////////////////////
+// UPDATE DATA TEXT MERCHANT BY SALES //
+///////////////////////////////////////
+// Sudah bisa Postman
+router.patch('/merchant/sales/update', (req,res) =>{
+
+    const sql = `UPDATE table_merchant SET 
+    staff_id = ?,
+    store_name = ?, category_id = ?,
+    address = ?, mobile_number = ?,
+    location = ?, approval = ? WHERE staff_id = ${req.body.staff_id} AND id = ${req.body.id} `
+
+    // staff_id: req.user.id, / staff_id: req.user.staff_id,
+
+    const dataFinal = [ req.body.staff_id, req.body.store_name,
+        req.body.category_id, req.body.address, req.body.mobile_number,
+        req.body.location, req.body.approval ]
+
+        console.log(req.body.staff_id);
+        console.log(req.body.store_name);
+        console.log(req.body.category_id);
+        console.log(req.body.address);
+        console.log(req.body.mobile_number);
+        console.log(req.body.location);
+        console.log(req.body.approval);
+        console.log(req.body.id);
+
+    conn.query(sql, dataFinal, (err,result) =>{
+        if(err) return res.status(500).send(err)
+
+        res.status(200).send({message: "UPDATE Merchant Berhasil", result})
+        console.log(result);
+    })
 })
 
 ////////////////////////
