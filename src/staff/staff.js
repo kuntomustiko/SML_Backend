@@ -32,7 +32,7 @@ const upload = multer({
 //////////////////////////////////
 // PATCH UPDATE DATA KTP IMAGE //
 ////////////////////////////////
-// Sudah Bisa
+// Sudah Bisa postman frontend
 router.patch('/merchant/update/ktpimage', upload.single('ktpimage'), async(req,res) =>{
     try{
         const filename = `${req.body.store_name}-ktp.png`
@@ -54,7 +54,7 @@ router.patch('/merchant/update/ktpimage', upload.single('ktpimage'), async(req,r
 ////////////////////////////////////
 // PATCH UPDATE DATA STORE IMAGE //
 //////////////////////////////////
-// Sudah Bisa
+// Sudah Bisa Postman Frontend
 router.patch('/merchant/update/storeimage', upload.single('storeimage'), async(req,res) =>{
     try {
         const filename = `${req.body.store_name}-store.png`
@@ -75,12 +75,12 @@ router.patch('/merchant/update/storeimage', upload.single('storeimage'), async(r
 ////////////////////////////////////////
 // PATCH UPDATE DATA SIGNATURE IMAGE //
 //////////////////////////////////////
-// Sudah Bisa
+// Sudah Bisa Postman Frontend
 router.patch('/merchant/update/signature', upload.single('signatureimage'), async(req,res) =>{
     try {
         const filename = `${req.body.store_name}-signature.png`
         const sql = `UPDATE table_merchant SET signature_image = "${filename}" WHERE staff_id = ${req.body.staff_id} AND id = ${req.body.id}`
-        await sharp(req.file.buffer).resize(200).png().toFile(`${storeImageDirectory}/${filename}`)
+        await sharp(req.file.buffer).resize(200).png().toFile(`${signatureImageDirectory}/${filename}`)
 
         conn.query(sql, (err,result) =>{
             if(err) return res.status(500).send({err: sqlMessage})
@@ -98,7 +98,7 @@ router.patch('/merchant/update/signature', upload.single('signatureimage'), asyn
 ///////////////////////////////////////////////////////
 // GET LAST DATA AFTER ADD DATA FIRST TIME PER SALES//
 /////////////////////////////////////////////////////
-// sudah bisa
+// sudah bisa postman front end AddImage.jsx
 router.get('/merchant/lastdata/sales/:id', (req,res) =>{
     // Ambil nama toko buat menjadi nama file ktp di data terakhir berdasarkan id
     const sqlRead = `Select * FROM table_merchant WHERE staff_id = ${req.params.id} ORDER BY id DESC LIMIT 1`
@@ -109,11 +109,11 @@ router.get('/merchant/lastdata/sales/:id', (req,res) =>{
         res.status(200).send(result[0])
     })
 })
+
 ///////////////////////////////////////////////
 // POST KTP IMAGE AFTER ADD DATA FIRST TIME //
 /////////////////////////////////////////////
-// sudah bisa
-// butuh 
+// sudah bisa postman frontend AddImage.jsx
 router.patch('/merchant/firstadd/ktpimage',  upload.single('ktpimage'), async(req,res) =>{
     try {
 
@@ -136,8 +136,7 @@ router.patch('/merchant/firstadd/ktpimage',  upload.single('ktpimage'), async(re
 ///////////////////////////////////////////////
 // POST STORE IMAGE AFTER ADD DATA FIRST TIME //
 /////////////////////////////////////////////
-// sudah bisa
-// butuh 
+// sudah bisa postman frontend AddImage.jsx
 router.patch('/merchant/firstadd/storeimage', upload.single('storeimage'), async(req,res) =>{
     try {
 
@@ -160,8 +159,7 @@ router.patch('/merchant/firstadd/storeimage', upload.single('storeimage'), async
 /////////////////////////////////////////////////////
 // POST SIGNATURE IMAGE AFTER ADD DATA FIRST TIME //
 ///////////////////////////////////////////////////
-// sudah bisa
-// butuh 
+// sudah bisa postman frontend AddImage.jsx
 router.patch('/merchant/firstadd/signatureimage',  upload.single('signatureimage'), async(req,res) =>{
     try {
 
@@ -187,8 +185,8 @@ router.patch('/merchant/firstadd/signatureimage',  upload.single('signatureimage
 /////////////////////
 // READ KTP IMAGE //
 ///////////////////
-// sudah bisa
-router.get('/merchant/ktp/:filename', (req, res) => {
+// sudah bisa postman frontend DetailMerchant.jsx
+router.get('/merchant/read/ktpimage/:filename', (req, res) => {
     let options = {
         root: ktpImageDirectory
     };
@@ -205,8 +203,8 @@ router.get('/merchant/ktp/:filename', (req, res) => {
 ///////////////////////
 // READ STORE IMAGE //
 /////////////////////
-// sudah bisa
-router.get('/merchant/store/:filename', (req, res) => {
+// sudah bisa postman frontend DetailMerchant.jsx
+router.get('/merchant/read/storeimage/:filename', (req, res) => {
     let options = {
         root: storeImageDirectory
     };
@@ -223,8 +221,8 @@ router.get('/merchant/store/:filename', (req, res) => {
 ///////////////////////////
 // READ SIGNATURE IMAGE //
 /////////////////////////
-// sudah bisa
-router.get('/merchant/signature/:filename', (req, res) => {
+// sudah bisa postman frontend DetailMerchant.jsx
+router.get('/merchant/read/signatureimage/:filename', (req, res) => {
     let options = {
         root: signatureImageDirectory
     };
@@ -238,87 +236,13 @@ router.get('/merchant/signature/:filename', (req, res) => {
     });
 })
 
-/////////////////////
-// EDIT KTP IMAGE //
-///////////////////
-router.post('/merchant/ktpimage/:id',  upload.single('ktp'), async(req,res) =>{
-    try {
-        const ktpimg = `${req.params.id}-ktp.png`
-    
-        const sql = `UPDATE table_merchant SET ktp_image = ? WHERE id = ?`
-        const data = [ktpimg. req.params.id]
-    
-        await sharp(req.file.buffer).rresize(200).png().toFile(`${ktpImageDirectory}/${ktpimg}`)
-    
-        conn.query(sql, data, (err,result) =>{
-            if (err) {
-                return res.status(500).send(err);
-            }
-            res.status(200).send({message: "berhasil", result})
-        })
-    } catch (err) {
-        res.status(404).send(err)
-    }
-},(err, req, res, next) => {
-    res.status(500).send(err)
-})
+//------------------------------------------------------------------------------------------ ------ ------------------------------------------------------------------------\\ 
+//------------------------------------------------------------------------------------------ LEADER ------------------------------------------------------------------------\\ 
+//------------------------------------------------------------------------------------------ ------ ------------------------------------------------------------------------\\ 
 
-///////////////////////
-// EDIT STORE IMAGE //
-/////////////////////
-router.post('/merchant/storeimage/:id',  upload.single('ktp'), async(req,res) =>{
-    try {
-        const storeimg = `${req.params.id}-store.png`
-    
-        const sql = `UPDATE table_merchant SET store_image = ? WHERE id = ?`
-        const data = [storeimg. req.params.id]
-    
-        await sharp(req.file.buffer).rresize(200).png().toFile(`${storeImageDirectory}/${storeimg}`)
-    
-        conn.query(sql, data, (err,result) =>{
-            if (err) {
-                return res.status(500).send(err);
-            }
-            res.status(200).send({message: "berhasil", result})
-        })
-    } catch (err) {
-        res.status(404).send(err)
-    }
-},(err, req, res, next) => {
-    res.status(500).send(err)
-})
-
-//////////////////////////
-// EDIT SIGNATURE IMAGE //
-/////////////////////////
-router.post('/merchant/signatureimage/:id',  upload.single('ktp'), async(req,res) =>{
-    try {
-        const signatureimg = `${req.params.id}-signature.png`
-    
-        const sql = `UPDATE table_merchant SET signature_image = ? WHERE id = ?`
-        const data = [storeimg. req.params.id]
-    
-        await sharp(req.file.buffer).rresize(200).png().toFile(`${signatureImageDirectory}/${signature}`)
-    
-        conn.query(sql, data, (err,result) =>{
-            if (err) {
-                return res.status(500).send(err);
-            }
-            res.status(200).send({message: "berhasil", result})
-        })
-    } catch (err) {
-        res.status(404).send(err)
-    }
-},(err, req, res, next) => {
-    res.status(500).send(err)
-})
-
-
-//------------------ LEADER ------------------\\ 
 ///////////////////////////////
 // READ ALL MERCHANT LEADER //
 /////////////////////////////
-// belum ada jwt
 // bisa
 router.get('/merchant/leader/read',  (req,res) =>{
     const sql = `SELECT * FROM table_merchant`
@@ -334,8 +258,7 @@ router.get('/merchant/leader/read',  (req,res) =>{
 /////////////////////////////////////////////////
 // READ ALL MERCHANT LEADER ONLY NOT APPROVAL //
 ///////////////////////////////////////////////
-// belum ada jwt
-// bisa
+
 router.get('/merchant/leader/read/notapproval',  (req,res) =>{
     const sql = `SELECT merch.id, merch.staff_id, staff.staff_id, staff.name,
     merch.date_created, merch.store_name, merch.category_id, merch.address,
@@ -355,8 +278,7 @@ router.get('/merchant/leader/read/notapproval',  (req,res) =>{
 ///////////////////////////
 // EDIT MERCHANT LEADER //
 /////////////////////////
-// belum ada jwt
-// bisa
+
 router.patch('/merchant/leader/update/:id',  (req,res)=>{
     const sql = `UPDATE table_merchant SET ? WHERE id = ?`
     const data = [req.body, req.params.id]
@@ -406,12 +328,17 @@ router.post('/leader/insert/staffid',  (req,res) =>{
     })
 })
 
-//------------------ SALES ------------------\\ 
+//------------------------------------------------------------------------------------------ ----- ------------------------------------------------------------------------\\ 
+//------------------------------------------------------------------------------------------ SALES ------------------------------------------------------------------------\\ 
+//------------------------------------------------------------------------------------------ ----- ------------------------------------------------------------------------\\ 
 
 ///////////////////////////
 // READ ID FROM STAFF_ID//
 /////////////////////////
+// Sudah bisa di postman frontend AddImage.jsx AddText.jsx
 router.get('/sales/read/id/:staff_id', (req,res) =>{
+
+    // mendapatkan id = 10 dari staff_id = 4444
     const getId = `SELECT id FROM table_staff WHERE staff_id = ${req.params.staff_id}`
 
     conn.query(getId, (err,result) =>{
@@ -425,8 +352,7 @@ router.get('/sales/read/id/:staff_id', (req,res) =>{
 ////////////////////////////////
 // READ ALL MERCHANT PER SALES//
 ////////////////////////////////
-// sudah bisa
-// butuh 
+// sudah bisa postman frontend MerchantData.jsx
 router.get('/merchant/sales/read/:staff_id', (req,res) =>{
 
     const getStaffId = `SELECT id FROM table_staff WHERE staff_id = ${req.params.staff_id}`
@@ -438,12 +364,14 @@ router.get('/merchant/sales/read/:staff_id', (req,res) =>{
         
         let id = result[0].id
         
-        const sql = `SELECT tm.id, tm.staff_id, tm.date_created, tm.store_name, tm.category_id, tc.category, tm.store_image FROM table_merchant tm JOIN table_category tc ON tm.category_id = tc.id WHERE staff_id = ${id}`
+        const sql = `SELECT tm.id, tm.staff_id, tm.date_created,
+        tm.store_name, tm.category_id, tc.category, tm.store_image
+        FROM table_merchant tm JOIN table_category tc ON tm.category_id = tc.id WHERE staff_id = ${id}`
+
         conn.query(sql, (err,result) =>{
             if(err){
                 return res.status(500).send(err)
             }
-            console.log(result[0]);
             res.status(200).send(result)
 
         })
@@ -453,7 +381,7 @@ router.get('/merchant/sales/read/:staff_id', (req,res) =>{
 /////////////////////////////////////////
 // INSERT DATA TEXT MERCHANT BY SALES //
 ///////////////////////////////////////
-// butuh 
+// sudah selesai di postman frontend AddText.jsx
 router.post('/merchant/sales/insert', (req,res) =>{
 
         const sql = `INSERT INTO table_merchant SET 
@@ -461,8 +389,6 @@ router.post('/merchant/sales/insert', (req,res) =>{
         store_name = ?, category_id = ?,
         address = ?, mobile_number = ?,
         location = ?, approval = ? `
-    
-        // staff_id: req.user.id, / staff_id: req.user.staff_id,
     
         const dataFinal = [ req.body.staff_id, req.body.date_created, req.body.store_name,
             req.body.category_id, req.body.address, req.body.mobile_number, req.body.location, req.body.approval]
@@ -477,7 +403,7 @@ router.post('/merchant/sales/insert', (req,res) =>{
 /////////////////////////////////////////
 // UPDATE DATA TEXT MERCHANT BY SALES //
 ///////////////////////////////////////
-// Sudah bisa Postman
+// Sudah bisa Postman frontend UpdateMerchant.jsx
 router.patch('/merchant/sales/update', (req,res) =>{
 
     const sql = `UPDATE table_merchant SET 
@@ -486,57 +412,46 @@ router.patch('/merchant/sales/update', (req,res) =>{
     address = ?, mobile_number = ?,
     location = ?, approval = ? WHERE staff_id = ${req.body.staff_id} AND id = ${req.body.id} `
 
-    // staff_id: req.user.id, / staff_id: req.user.staff_id,
-
     const dataFinal = [ req.body.staff_id, req.body.store_name,
         req.body.category_id, req.body.address, req.body.mobile_number,
         req.body.location, req.body.approval ]
 
-        console.log(req.body.staff_id);
-        console.log(req.body.store_name);
-        console.log(req.body.category_id);
-        console.log(req.body.address);
-        console.log(req.body.mobile_number);
-        console.log(req.body.location);
-        console.log(req.body.approval);
-        console.log(req.body.id);
-
     conn.query(sql, dataFinal, (err,result) =>{
         if(err) return res.status(500).send(err)
-
         res.status(200).send({message: "UPDATE Merchant Berhasil", result})
-        console.log(result);
     })
 })
 
 ////////////////////////
 // READ ALL CATEGORY //
 //////////////////////
-// Sudah Bisa
+// Sudah Bisa Postmant Frontend AddText.jsx UpdateMerchant.jsx
 router.get('/read/allcategory', (req,res) =>{
     const sql = `SELECT * FROM table_category`
 
     conn.query(sql, (err,result) =>{
         if(err) return res.send(500).send(err)
-
-        console.log(result[0])
         res.status(200).send(result)
     })
 })
 
+// DELETE MERCHANT 
+// yang bisa delete merchant leader saja atau sales juga bisa 
+// kesulitan = mungkin karena tidak ada referesi yang tepat sehingga sedikit memperlambat proses pengerjaan
+// kesulitan = mungkin karena tidak ada workflow alur kerja tertulis sehingga sedikit memperlambat proses pengerjaan 
 
 
 /////////////////////
 // REGISTER STAFF //
 ///////////////////
-// bisa virza
+// sudah bisa postman frontend Register.jsx
 router.post('/register_staff', (req, res) => {
     const sql = `Select * from table_staff where staff_id = ${req.body.staff_id} and status = 1 `
     
     conn.query(sql, (err, result) => {
       if(err) return res.status(500).send(err)
       
-      if(result  < 1) return res.status(200).send({message:"staff_id tidak di temukan"})
+      if(result  < 1) return res.status(200).send({message:"staff id tidak di temukan"})
        
       const sql2 = `UPDATE table_staff SET ? WHERE staff_id = ? `
       const data = req.body
@@ -557,8 +472,8 @@ router.post('/register_staff', (req, res) => {
 ///////////////////////////
 // LOGIN STAFF & LEADER //
 /////////////////////////
-// bisa virza
-router.post('/login', (req, res) => {
+// Sudah Bisa Postman Frontend Login.jsx
+router.post('/login_staff', (req, res) => {
    const {email, password} = req.body
 
    const sql = `SELECT * FROM table_staff WHERE email = '${email}'`
@@ -606,8 +521,8 @@ router.post('/login', (req, res) => {
 ////////////////////////////
 // LOGOUT STAFF & LEADER //
 //////////////////////////
-// butuh 
-router.delete('/logout', (req,res) => {
+// Sudah bisa Postman Frontend Home.jsx
+router.delete('/logout_staff', (req,res) => {
     const sql = `DELETE FROM table_staff WHERE staff_id = ${req.user.staff_id}`
 
     conn.query(sql, (err, result) => {
@@ -623,35 +538,13 @@ router.delete('/logout', (req,res) => {
 //////////////////////
 // DETAIL MERCHANT //
 ////////////////////
-// sudah bisa
+// sudah bisa postman MerchantData.jsx MerchantData.jsx DetailMerchant.jsx 
 router.get('/detailmerchant/:id', (req,res) =>{
     const sql = `SELECT * FROM table_merchant WHERE id = ${req.params.id}`
-
     conn.query(sql, (err,result) =>{
         if(err) return res.send(500).send(err)
-
-        console.log(result[0])
         res.status(200).send(result)
     })
 })
 
-/////////////////////////////
-// UPDATE DETAIL MERCHANT //
-///////////////////////////
-router.post('/update/detailmerchant/:id', (req,res) =>{
-    const sql = `UPDATE table_merchant SET ? WHERE id = ${req.params.id}`
-
-    const data = {store_name: req.body.store_name,
-        category_id: req.body.category_id,
-        mobile_number: req.body.mobile_number,
-        address: req.body.address, location: req.body.location, approval: req.body.approval }
-
-    // store name, category, mobile number, address, location (latitude/longitude)
-
-    conn.query(sql, data, (err,result) =>{
-        if(err) return res.status(500).send(err)
-
-        res.status(200).send({message: "Penambahan Product Berhasil", result})
-    })
-})
 module.exports = router
