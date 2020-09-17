@@ -29,19 +29,18 @@ const upload = multer({
     }
 })
 
-/////////////////////
-// POST KTP IMAGE //
-///////////////////
-// belum bisa
-// butuh 
-router.post('/merchant/update/ktpimage', upload.single('ktp'), async(req,res) =>{
+//////////////////////////////////
+// PATCH UPDATE DATA KTP IMAGE //
+////////////////////////////////
+// Sudah Bisa
+router.patch('/merchant/update/ktpimage', upload.single('ktpimage'), async(req,res) =>{
     try{
-        const sql = `UPDATE table_merchant SET KTP_image = ? WHERE id = ? `
-        const filename = `${req.merchant.storename}-ktp.png`
-        const data = [filename, req.merchant.storename]
+        const filename = `${req.body.store_name}-ktp.png`
+        const sql = `UPDATE table_merchant SET KTP_image = "${filename}" WHERE staff_id = ${req.body.staff_id} and id = ${req.body.id} `
+      
         await sharp(req.file.buffer).resize(200).png().toFile(`${ktpImageDirectory}/${filename}`)
 
-        conn.query(sql, data, (err,result) =>{
+        conn.query(sql, (err,result) =>{
             if(err) return res.status(500).send({err: err.sqlMessage})
             res.status(200).send({message: filename})
         })
@@ -52,18 +51,17 @@ router.post('/merchant/update/ktpimage', upload.single('ktp'), async(req,res) =>
     res.status(400).send(err.message)
 })
 
-///////////////////////
-// POST STORE IMAGE //
-/////////////////////
-// belum bisa
-router.post('/merchant/update/storeimage', upload.single('store'), async(req,res) =>{
+////////////////////////////////////
+// PATCH UPDATE DATA STORE IMAGE //
+//////////////////////////////////
+// Sudah Bisa
+router.patch('/merchant/update/storeimage', upload.single('storeimage'), async(req,res) =>{
     try {
-        const sql = `UPDATE table_merchant SET store_image = ? WHERE id = ?`
-        const filename = `${req.merchant.storename}-store.png`
-        const data = [filename, req.merchant.storename]
+        const filename = `${req.body.store_name}-store.png`
+        const sql = `UPDATE table_merchant SET store_image = "${filename}" WHERE staff_id = ${req.body.staff_id} AND id = ${req.body.id}`
         await sharp(req.file.buffer).resize(200).png().toFile(`${storeImageDirectory}/${filename}`)
 
-        conn.query(sql, data,(err,result) =>{
+        conn.query(sql, (err,result) =>{
             if(err) return res.status(500).send({err: sqlMessage})
             res.status(200).send({message:filename})
         })
@@ -74,18 +72,18 @@ router.post('/merchant/update/storeimage', upload.single('store'), async(req,res
     res.status(400).send(err.message)
 })
 
-///////////////////////////
-// POST SIGNATURE IMAGE //
-/////////////////////////
-// belum bisa
-router.post('/merchant/update/signatureimage', upload.single('signature'), async(req,res) =>{
+////////////////////////////////////////
+// PATCH UPDATE DATA SIGNATURE IMAGE //
+//////////////////////////////////////
+// Sudah Bisa
+router.patch('/merchant/update/signatureimage', upload.single('signatureimage'), async(req,res) =>{
     try {
-        const sql = `UPDATE table_merchant SET KTP_image = ? WHERE id = ?`
-        const filename = `${req.merchant.storename}-signature.png`
-        const data = [filename, req.merchant.storename]
+        const filename = `${req.body.store_name}-signature.png`
+        const sql = `UPDATE table_merchant SET signature_image = "${filename}" WHERE staff_id = ${req.body.staff_id} AND id = ${req.body.id}`
+       
         await sharp(req.file.buffer).resize(200).png().toFile(`${signatureImageDirectory}/${filename}`)
 
-        conn.query(sql, data,(err,result) =>{
+        conn.query(sql, (err,result) =>{
             if(err) return res.status(500).send({err: sqlMessage})
             res.status(200).send({message:filename})
         })
@@ -441,7 +439,7 @@ router.get('/merchant/sales/read/:staff_id', (req,res) =>{
         
         let id = result[0].id
         
-        const sql = `SELECT * FROM table_merchant WHERE staff_id = ${id}`
+        const sql = `SELECT tm.id, tm.staff_id, tm.date_created, tm.store_name, tm.category_id, tc.category, tm.store_image FROM table_merchant tm JOIN table_category tc ON tm.category_id = tc.id WHERE staff_id = ${id}`
         conn.query(sql, (err,result) =>{
             if(err){
                 return res.status(500).send(err)
@@ -491,6 +489,7 @@ router.get('/read/allcategory', (req,res) =>{
         res.status(200).send(result)
     })
 })
+
 
 
 /////////////////////
