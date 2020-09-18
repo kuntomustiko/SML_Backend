@@ -245,7 +245,9 @@ router.get('/merchant/read/signatureimage/:filename', (req, res) => {
 /////////////////////////////
 // bisa
 router.get('/merchant/leader/read',  (req,res) =>{
-    const sql = `SELECT * FROM table_merchant`
+    const sql = `SELECT tm.id, tm.staff_id, tm.date_created,
+    tm.store_name, tm.category_id, tc.category, tm.store_image
+    FROM table_merchant tm JOIN table_category tc ON tm.category_id = tc.id`
 
     conn.query(sql, (err, result) =>{
         if(err){
@@ -297,7 +299,7 @@ router.patch('/merchant/leader/update/:id',  (req,res)=>{
 // DELETE MERCHANT LEADER //
 ///////////////////////////
 // butuh 
-// sudah bisa postman
+// sudah bisa Postman Frontend MerchantData.jsx folder leader
 router.delete('/merchant/leader/delete/:id',  (req,res) =>{
     const data = {id: req.params.id}
     const sql = `DELETE FROM table_merchant WHERE ?`
@@ -306,7 +308,6 @@ router.delete('/merchant/leader/delete/:id',  (req,res) =>{
         if (err) {
             return res.status(500).send(err.sqlMessage)
         }
-
         res.status(200).send({message: "merchant berhasil di hapus", result})
     })
 })
@@ -314,11 +315,10 @@ router.delete('/merchant/leader/delete/:id',  (req,res) =>{
 ////////////////////////////////
 // INSERT STAFF ID BY LEADER //
 //////////////////////////////
-// butuh  jwt
-// bisa
+// Sudah Bisa Postman Frontend InputStaff.jsx folder Leader
 router.post('/leader/insert/staffid',  (req,res) =>{
-    const sql = `INSERT INTO table_staff (staff_id) SET ?`
-    const data = req.body 
+    const sql = `INSERT INTO table_staff SET staff_id = ?`
+    const data = req.body.staff_id 
 
     conn.query(sql, data, (err,result) =>{
         if (err) {
@@ -331,6 +331,18 @@ router.post('/leader/insert/staffid',  (req,res) =>{
 ////////////////////////////////////
 // GIVE APPROVAL OR NOT APPROVAL //
 //////////////////////////////////
+// Sudah Bisa di Postman Frontend UpdateMerchantLeader.jsx folder leader
+router.patch('/merchant/leader/update/approval/:id',  (req,res)=>{
+    const sql = `UPDATE table_merchant SET approval = ? WHERE id = ?`
+    const data = [req.body.approval, req.params.id]
+
+    conn.query(sql,data, (err, result) =>{
+        if(err){
+            return res.status(500).send(err.sqlMessage)
+        }
+        res.status(200).send({message: "Approval berhasil di ubah", result})
+    })
+})
 
 //------------------------------------------------------------------------------------------ ----- ------------------------------------------------------------------------\\ 
 //------------------------------------------------------------------------------------------ SALES ------------------------------------------------------------------------\\ 
