@@ -275,10 +275,10 @@ router.get('/merchant/leader/read/notapproval',  (req,res) =>{
     })
 })
 
+
 ///////////////////////////
 // EDIT MERCHANT LEADER //
 /////////////////////////
-
 router.patch('/merchant/leader/update/:id',  (req,res)=>{
     const sql = `UPDATE table_merchant SET ? WHERE id = ?`
     const data = [req.body, req.params.id]
@@ -297,7 +297,7 @@ router.patch('/merchant/leader/update/:id',  (req,res)=>{
 // DELETE MERCHANT LEADER //
 ///////////////////////////
 // butuh 
-// belum bisa
+// sudah bisa postman
 router.delete('/merchant/leader/delete/:id',  (req,res) =>{
     const data = {id: req.params.id}
     const sql = `DELETE FROM table_merchant WHERE ?`
@@ -327,6 +327,10 @@ router.post('/leader/insert/staffid',  (req,res) =>{
         res.send({message: 'Register Berhasil', result})
     })
 })
+
+////////////////////////////////////
+// GIVE APPROVAL OR NOT APPROVAL //
+//////////////////////////////////
 
 //------------------------------------------------------------------------------------------ ----- ------------------------------------------------------------------------\\ 
 //------------------------------------------------------------------------------------------ SALES ------------------------------------------------------------------------\\ 
@@ -422,6 +426,24 @@ router.patch('/merchant/sales/update', (req,res) =>{
     })
 })
 
+/////////////////////////////
+// DELETE MERCHANT BY SALES //
+///////////////////////////
+// butuh 
+// Sudah bisa di postman frontend MerchantData.jsx sales
+router.delete('/merchant/sales/delete/:id/:staff_id',  (req,res) =>{
+    const sql = `DELETE FROM table_merchant WHERE id = ? AND staff_id = ?`
+    const data = [req.params.id, req.params.staff_id]
+
+    conn.query(sql, data, (err,result) =>{
+        if (err) {
+            return res.status(500).send(err.sqlMessage)
+        }
+        res.status(200).send({message: "merchant berhasil di hapus", result})
+    })
+})
+
+
 ////////////////////////
 // READ ALL CATEGORY //
 //////////////////////
@@ -435,10 +457,6 @@ router.get('/read/allcategory', (req,res) =>{
     })
 })
 
-// DELETE MERCHANT 
-// yang bisa delete merchant leader saja atau sales juga bisa 
-// kesulitan = mungkin karena tidak ada referesi yang tepat sehingga sedikit memperlambat proses pengerjaan
-// kesulitan = mungkin karena tidak ada workflow alur kerja tertulis sehingga sedikit memperlambat proses pengerjaan 
 
 
 /////////////////////
