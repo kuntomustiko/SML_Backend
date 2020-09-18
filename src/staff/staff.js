@@ -181,7 +181,6 @@ router.patch('/merchant/firstadd/signatureimage',  upload.single('signatureimage
 
 // ------------------------------- FINISH ADD DATA FIRST TIME ------------------------------- //
 
-
 /////////////////////
 // READ KTP IMAGE //
 ///////////////////
@@ -236,6 +235,8 @@ router.get('/merchant/read/signatureimage/:filename', (req, res) => {
     });
 })
 
+
+
 //------------------------------------------------------------------------------------------ ------ ------------------------------------------------------------------------\\ 
 //------------------------------------------------------------------------------------------ LEADER ------------------------------------------------------------------------\\ 
 //------------------------------------------------------------------------------------------ ------ ------------------------------------------------------------------------\\ 
@@ -274,23 +275,6 @@ router.get('/merchant/leader/read/notapproval',  (req,res) =>{
             return res.status(500).send(err)
         }
         res.status(200).send(result)
-    })
-})
-
-
-///////////////////////////
-// EDIT MERCHANT LEADER //
-/////////////////////////
-router.patch('/merchant/leader/update/:id',  (req,res)=>{
-    const sql = `UPDATE table_merchant SET ? WHERE id = ?`
-    const data = [req.body, req.params.id]
-
-    conn.query(sql,data, (err, result) =>{
-        if(err){
-            return res.status(500).send(err.sqlMessage)
-        }
-
-        res.status(200).send({message: "Merchant berhasil di edit", result})
     })
 })
 
@@ -349,6 +333,21 @@ router.patch('/merchant/leader/update/approval/:id',  (req,res)=>{
 // Sudah Bisa di Postman FrontEnd SalesData folder leader
 router.get('/merchant/leader/read/salesdata',  (req,res) =>{
     const sql = `SELECT * from table_staff`
+
+    conn.query(sql, (err, result) =>{
+        if(err){
+            return res.status(500).send(err)
+        }
+        res.status(200).send(result)
+    })
+})
+
+//////////////////////////////
+// FILTERING ID SALES DATA //
+////////////////////////////
+// Sudah Bisa Di Postman Frontend SalesData.jsx folder leader
+router.get('/merchant/leader/filter/:idsales',  (req,res) =>{
+    const sql = `SELECT staff_id, name, email, phone_number from table_staff WHERE staff_id = ${req.params.idsales} `
 
     conn.query(sql, (err, result) =>{
         if(err){
