@@ -243,7 +243,7 @@ router.get('/merchant/read/signatureimage/:filename', (req, res) => {
 ///////////////////////////////
 // READ ALL MERCHANT LEADER //
 /////////////////////////////
-// bisa
+// Sudah Bisa di Postman frontend MerchantData.jsx folder Leader
 router.get('/merchant/leader/read',  (req,res) =>{
     const sql = `SELECT tm.id, tm.staff_id, tm.date_created,
     tm.store_name, tm.category_id, tc.category, tm.store_image
@@ -260,14 +260,14 @@ router.get('/merchant/leader/read',  (req,res) =>{
 /////////////////////////////////////////////////
 // READ ALL MERCHANT LEADER ONLY NOT APPROVAL //
 ///////////////////////////////////////////////
-
+// Sudah Bisa di Postman Frontend ListNotApproval.jsx folder leader
 router.get('/merchant/leader/read/notapproval',  (req,res) =>{
     const sql = `SELECT merch.id, merch.staff_id, staff.staff_id, staff.name,
-    merch.date_created, merch.store_name, merch.category_id, merch.address,
+    merch.date_created, merch.store_name, cat.category, merch.category_id, merch.address,
     merch.mobile_number, merch.location, merch.approval, merch.KTP_image, merch.store_image, merch.signature_image
     FROM table_merchant as merch
     JOIN table_staff as staff 
-    ON merch.staff_id = staff.id WHERE approval = 0;`
+    ON merch.staff_id = staff.id JOIN table_category as cat ON merch.category_id = cat.id WHERE approval = 0;`
 
     conn.query(sql, (err, result) =>{
         if(err){
@@ -294,11 +294,9 @@ router.patch('/merchant/leader/update/:id',  (req,res)=>{
     })
 })
 
-
 /////////////////////////////
 // DELETE MERCHANT LEADER //
 ///////////////////////////
-// butuh 
 // sudah bisa Postman Frontend MerchantData.jsx folder leader
 router.delete('/merchant/leader/delete/:id',  (req,res) =>{
     const data = {id: req.params.id}
@@ -343,6 +341,38 @@ router.patch('/merchant/leader/update/approval/:id',  (req,res)=>{
         res.status(200).send({message: "Approval berhasil di ubah", result})
     })
 })
+
+
+///////////////////////////////
+// READ ALL SALES DATA //
+/////////////////////////////
+// Sudah Bisa di Postman FrontEnd SalesData folder leader
+router.get('/merchant/leader/read/salesdata',  (req,res) =>{
+    const sql = `SELECT * from table_staff`
+
+    conn.query(sql, (err, result) =>{
+        if(err){
+            return res.status(500).send(err)
+        }
+        res.status(200).send(result)
+    })
+})
+
+////////////////////////////////////
+// COUNT MERCHANT PER SALES DATA //
+//////////////////////////////////
+// Sudah Bisa di Postman 
+router.get('/merchant/leader/read/countmerchantsales/:staff_id',  (req,res) =>{
+    const sql = `SELECT count(*) as merchant FROM table_merchant WHERE staff_id = ${req.params.staff_id}`
+
+    conn.query(sql, (err, result) =>{
+        if(err){
+            return res.status(500).send(err)
+        }
+        res.status(200).send(result)
+    })
+})
+
 
 //------------------------------------------------------------------------------------------ ----- ------------------------------------------------------------------------\\ 
 //------------------------------------------------------------------------------------------ SALES ------------------------------------------------------------------------\\ 
