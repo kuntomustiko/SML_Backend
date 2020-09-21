@@ -36,7 +36,7 @@ const upload = multer({
 router.patch('/merchant/update/ktpimage', upload.single('ktpimage'), async(req,res) =>{
     try{
         const filename = `${req.body.store_name}-ktp.png`
-        const sql = `UPDATE table_merchant SET KTP_image = "${filename}" WHERE staff_id = ${req.body.staff_id} and id = ${req.body.id} `
+        const sql = `UPDATE table_merchant SET KTP_image = "${filename}", approval = "${req.body.approval}" WHERE staff_id = ${req.body.staff_id} and id = ${req.body.id} `
       
         await sharp(req.file.buffer).resize(200).png().toFile(`${ktpImageDirectory}/${filename}`)
 
@@ -58,7 +58,7 @@ router.patch('/merchant/update/ktpimage', upload.single('ktpimage'), async(req,r
 router.patch('/merchant/update/storeimage', upload.single('storeimage'), async(req,res) =>{
     try {
         const filename = `${req.body.store_name}-store.png`
-        const sql = `UPDATE table_merchant SET store_image = "${filename}" WHERE staff_id = ${req.body.staff_id} AND id = ${req.body.id}`
+        const sql = `UPDATE table_merchant SET store_image = "${filename}", approval = "${req.body.approval}" WHERE staff_id = ${req.body.staff_id} AND id = ${req.body.id}`
         await sharp(req.file.buffer).resize(200).png().toFile(`${storeImageDirectory}/${filename}`)
 
         conn.query(sql, (err,result) =>{
@@ -79,7 +79,7 @@ router.patch('/merchant/update/storeimage', upload.single('storeimage'), async(r
 router.patch('/merchant/update/signature', upload.single('signatureimage'), async(req,res) =>{
     try {
         const filename = `${req.body.store_name}-signature.png`
-        const sql = `UPDATE table_merchant SET signature_image = "${filename}" WHERE staff_id = ${req.body.staff_id} AND id = ${req.body.id}`
+        const sql = `UPDATE table_merchant SET signature_image = "${filename}", approval = "${req.body.approval}" WHERE staff_id = ${req.body.staff_id} AND id = ${req.body.id}`
         await sharp(req.file.buffer).resize(200).png().toFile(`${signatureImageDirectory}/${filename}`)
 
         conn.query(sql, (err,result) =>{
@@ -117,9 +117,14 @@ router.get('/merchant/lastdata/sales/:id', (req,res) =>{
 router.patch('/merchant/firstadd/ktpimage',  upload.single('ktpimage'), async(req,res) =>{
     try {
 
-        const filename = `${req.body.store_name}-ktp_image.png`        
+        const v2StoreName = req.body.store_name.replace(/\s/g, '')
+
+        const filename = `${v2StoreName}-ktp_image.png`        
         const sql = `UPDATE table_merchant SET KTP_image = "${filename}" WHERE staff_id = ${req.body.staff_id} AND store_name = "${req.body.store_name}" ORDER BY id DESC LIMIT 1`
  
+        console.log(filename);
+        console.log(req.body.staff_id);
+        console.log(req.body.store_name);
         await sharp(req.file.buffer).resize(200).png().toFile(`${ktpImageDirectory}/${filename}`)
 
         conn.query(sql,(err,result) =>{
@@ -140,7 +145,8 @@ router.patch('/merchant/firstadd/ktpimage',  upload.single('ktpimage'), async(re
 router.patch('/merchant/firstadd/storeimage', upload.single('storeimage'), async(req,res) =>{
     try {
 
-        const filename = `${req.body.store_name}-store_image.png`        
+        const v2StoreName = req.body.store_name.replace(/\s/g, '')
+        const filename = `${v2StoreName}-store_image.png`        
         const sql = `UPDATE table_merchant SET store_image = "${filename}" WHERE staff_id = ${req.body.staff_id} AND store_name = "${req.body.store_name}" ORDER BY id DESC LIMIT 1`
  
         await sharp(req.file.buffer).resize(200).png().toFile(`${storeImageDirectory}/${filename}`)
@@ -162,8 +168,8 @@ router.patch('/merchant/firstadd/storeimage', upload.single('storeimage'), async
 // sudah bisa postman frontend AddImage.jsx
 router.patch('/merchant/firstadd/signatureimage',  upload.single('signatureimage'), async(req,res) =>{
     try {
-
-        const filename = `${req.body.store_name}-signature_image.png`        
+        const v2StoreName = req.body.store_name.replace(/\s/g, '')
+        const filename = `${v2StoreName}-signature_image.png`        
         const sql = `UPDATE table_merchant SET signature_image = "${filename}" WHERE staff_id = ${req.body.staff_id} AND store_name = "${req.body.store_name}" ORDER BY id DESC LIMIT 1`
  
         await sharp(req.file.buffer).resize(200).png().toFile(`${signatureImageDirectory}/${filename}`)
