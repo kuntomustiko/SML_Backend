@@ -138,6 +138,9 @@ router.patch('/merchant/firstadd/ktpimage',  upload.single('ktpimage'), async(re
     res.status(400).send(err.message)
 })
 
+// need aproval
+
+
 ///////////////////////////////////////////////
 // POST STORE IMAGE AFTER ADD DATA FIRST TIME //
 /////////////////////////////////////////////
